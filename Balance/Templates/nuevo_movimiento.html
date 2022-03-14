@@ -1,0 +1,47 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balance de cuentas | Alta</title>
+    <link rel="stylesheet" href="static/css/styles.css">
+    <link rel="stylesheet" href="static/css/pico.css">
+
+</head>
+<body>
+    <header>
+        <div class="container">
+            Cabecera &nbsp;&nbsp;&nbsp; de <em>balances</em>
+        </div>
+    </header>
+
+    <section class="container">
+        <h1>Nuevo movimiento</h1>
+        <form action="/alta" method="post">
+            <div class="grid">
+                <label for="fecha">Fecha:
+                    <input type="date" name="fecha" id="fecha">
+                </label>
+                <label for="hora">Hora:
+                    <input type="time" name="hora" id="hora">
+                </label>
+            </div>
+            <label for="concepto">Concepto:</label>
+            <input type="text" name="concepto" id="concepto">
+            <label for="es_ingreso">Es ingreso:
+                <input type="checkbox" name="es_ingreso" id="es_ingreso">
+            </label>
+            <label for="cantidad">Cantidad:</label>
+            <input type="number" name="cantidad" id="cantidad" step="0.01" min="0.01">
+            <input type="submit" value="Aceptar" id="aceptar" name="aceptar">
+        </form>
+    </section>
+
+    <footer>
+        <div class="container">
+            &copy; 2022 - Todos los derechos reservados
+        </div>
+    </footer>
+
+</body>
+</html>
