@@ -7,3 +7,6 @@ Aplicacion de control de gastos, registro y modificacion.
 ### Fichero .env
 
 Copiar el fichero `.env_template`, renombrarlo a `.env` y elegir una de las opciones FLASK_ENV
+```powershell
+cp .env_template .env
+```
