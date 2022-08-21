@@ -3,18 +3,31 @@
             --color-secundario: #f7dba7;
             --negro: #2c363f; 
             --blanco: #fafafa;
-            --separacion-defecto: 8px;        }
+            --separacion-defecto: 5px;
+        }
 
-        header, footer {
-            padding: calc(2 * var(--separacion-defecto));
-            font-size: 24px;
+        body > header, body > footer {
+            padding: 2rem;
+            font-size: 2.5rem;
             background-color: var(--color-primario);
             color: var(--blanco);
             margin-top: var(--separacion-defecto);
+            width: calc(100% - 5px); 
         }
 
-        footer {
-            width: calc(100% - 50px); 
-            position: absolute;
-            bottom: var(--separacion-defecto);
-        } 
+        body > section > h1 {
+            font-size: 2rem;
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+
+        th {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        body > footer {
+            position: sticky;
+            bottom: 0;
+            font-size: 1rem;
+        }

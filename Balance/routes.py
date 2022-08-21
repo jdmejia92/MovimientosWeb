@@ -23,12 +23,10 @@ def inicio():
 
         linea = fichero_mv.readline()
 
-
-    linea = fichero_mv.readline()
+    """ linea = fichero_mv.readline() """
 
     fichero_mv.close()
-    return render_template("lista_movimientos.html", 
-                            movimientos = lista_movimientos)
+    return render_template("lista_movimientos.html", movimientos = lista_movimientos)
 
 @app.route("/alta", methods=["GET", "POST"])
 def alta():
