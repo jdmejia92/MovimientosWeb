@@ -1,4 +1,4 @@
- <html lang="en">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -24,25 +24,25 @@
                 <th>Cantidad</th>
             </tr>
 
-            {% for movimiento in movimientos %}
+            {% for movement in movements %}
             <tr>
-                <td>{{ movimiento.fecha }}</td>
-                <td>{{ movimiento.hora }} </td>
-                <td>{{ movimiento.concepto}}</td>
+                <td>{{ movement.fecha }}</td>
+                <td>{{ movement.hora }} </td>
+                <td>{{ movement.concepto}}</td>
                 <td>
-                    {% if movimiento.es_ingreso %} 
+                    {% if movement.es_ingreso %} 
                         Ingreso 
                     {% else %} 
                         Gasto 
                     {% endif %}
                 </td>
-                <td>{{ movimiento.cantidad }}</td>
+                <td>{{ movement.cantidad }}</td>
             </tr>
             {% endfor %}
         </table>
-        <p class="actions">
-            <a href="/alta" role="button">+</a>
-        </p>
+        <div class="actions">
+            <a href="/alta" role="button">Nuevo Ingreso</a>
+        </div>
     </section>
     <footer>
         <div class="container">

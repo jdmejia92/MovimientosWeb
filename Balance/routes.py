@@ -2,16 +2,16 @@ from flask import render_template, request, redirect, url_for
 from Balance import app
 
 @app.route("/")
-def inicio():
-    lista_movimientos = []
-    fichero_mv = open("data/movimientos.csv", "r")
+def start():
+    list_movements = []
+    file_mv = open("data/movements.csv", "r")
 
     #----------------------------------------------------
-    cab = fichero_mv.readline()
-    linea = fichero_mv.readline()
-    while linea != "":
-        campos = linea.split(",")
-        lista_movimientos.append(
+    cab = file_mv.readline()
+    line = file_mv.readline()
+    while line != "":
+        campos = line.split(",")
+        list_movements.append(
             {
                 "fecha": campos[0],
                 "hora": campos[1],
@@ -21,18 +21,16 @@ def inicio():
             }
         )
 
-        linea = fichero_mv.readline()
+        line = file_mv.readline()
 
-    """ linea = fichero_mv.readline() """
-
-    fichero_mv.close()
-    return render_template("lista_movimientos.html", movimientos = lista_movimientos)
+    file_mv.close()
+    return render_template("list_movements.html", movements = list_movements)
 
 @app.route("/alta", methods=["GET", "POST"])
 def alta():
     if request.method == 'GET':
-        return render_template("nuevo_movimiento.html")
+        return render_template("new_movement.html")
     else:
         # recuperar los campos del request.form
         # grabar el nuevo registro en movimientos.csv
-        return redirect(url_for("inicio"))
+        return redirect(url_for("start"))

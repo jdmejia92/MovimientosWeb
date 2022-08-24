@@ -1,9 +1,14 @@
         :root {
-            --color-primario: #8377d1;
+            --color-primario: #1095c1;
             --color-secundario: #f7dba7;
             --negro: #2c363f; 
             --blanco: #fafafa;
             --separacion-defecto: 5px;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-start;
         }
 
         body > header, body > footer {
@@ -30,4 +35,18 @@
             position: sticky;
             bottom: 0;
             font-size: 1rem;
+        }
+
+        .back_container {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .back_container > .back {
+            font-size: .85rem;
+            background-color: white;
+            color: var(--color-primario);
+            width: 150px;
+            display: flex;
+            justify-content: center;
         }
