@@ -37,16 +37,56 @@
             font-size: 1rem;
         }
 
+        form {
+            margin-bottom: 0;
+        }
+
         .back_container {
             display: flex;
             justify-content: flex-end;
+            background-color: none;
+            color: none;
         }
 
         .back_container > .back {
             font-size: .85rem;
-            background-color: white;
+            background-color: transparent;
             color: var(--color-primario);
             width: 150px;
             display: flex;
             justify-content: center;
+        }
+
+        .error-message {
+            border: 1px solid red;
+            padding: calc(2 * var(--separacion-defecto));
+            background-color: var(--color-secundario);
+        }
+
+        .error-message li {
+            font-size: 0.8rem;
+            color: darkred;
+        }
+
+        .delete-container {
+            padding: 5px;
+        }
+
+        #delete {
+            max-width: 25px;
+            max-height: 35px;
+            padding: 0px;
+            margin: 0;
+            opacity: 0;
+        }
+
+        tr.movement_list:hover #delete {
+            opacity: 1;
+            transition-delay: 20s;
+            background-color: var(--color-primario);
+            max-width: 25px;
+            max-height: 35px;
+            padding: 0px;
+            margin: 0;
+            transition: all 1s ease;
         }

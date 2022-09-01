@@ -1,48 +1,28 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Balance de cuentas | Alta</title>
-    <link rel="stylesheet" href="static/css/pico.css">
-    <link rel="stylesheet" href="static/css/styles.css">
+{% extends 'base.html' %}
 
-</head>
-<body>
-    <header>
-        <div class="container">
-            Cabecera de balances
-        </div>
-    </header>
+{% block title %} Alta {% endblock %}
 
-    <section class="container">
-        <h1>Nuevo movimiento</h1>
-        <form action="/alta" method="post">
-            <div class="grid">
-                <label for="fecha">Fecha:
-                    <input type="date" name="fecha" id="fecha">
-                </label>
-                <label for="hora">Hora:
-                    <input type="time" name="hora" id="hora">
-                </label>
-            </div>
-            <label for="concepto">Concepto:</label>
-            <input type="text" name="concepto" id="concepto">
-            <label for="es_ingreso">Es ingreso:
-                <input type="checkbox" name="es_ingreso" id="es_ingreso">
+{% block page_content %}
+    <h1>Nuevo movimiento</h1>
+    <form action="/alta" method="post">
+        <div class="grid">
+            <label for="fecha">Fecha:
+                <input type="date" name="fecha" id="fecha" value="{{data.fecha}}">
             </label>
-            <label for="cantidad">Cantidad:</label>
-            <input type="number" name="cantidad" id="cantidad" step="0.01" min="0.01">
-            <input type="submit" value="Aceptar" id="aceptar" name="aceptar">
-            <div class="back_container">
-                <button class="back" href="/">Regresar</button>
-            </div>
-        </form>
-    </section>
-    <footer>
-        <div class="container">
-            &copy; 2022 - Todos los derechos reservados
+            <label for="hora">Hora:
+                <input type="time" name="hora" id="hora" value="{{data.hora}}">
+            </label>
         </div>
-    </footer>
-</body>
-</html>
+        <label for="concepto">Concepto:</label>
+        <input type="text" name="concepto" id="concepto" value="{{data.concepto}}">
+        <label for="es_ingreso">Es ingreso:
+            <input type="checkbox" name="es_ingreso" id="es_ingreso" value="{{data.es_ingreso}}">
+        </label>
+        <label for="cantidad">Cantidad:</label>
+        <input type="number" name="cantidad" id="cantidad" step="0.01" value="{{data.cantidad}}">
+        <input type="submit" value="Aceptar" id="aceptar" name="aceptar">
+    </form>
+    <div class="back_container">
+        <a class="back" href="/" role="button">Regresar</a>
+    </div>
+{% endblock %}

@@ -1,53 +1,38 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Balance de cuenta | Movimientos</title>
-    <link rel="stylesheet" href="static/css/pico.css">
-    <link rel="stylesheet" href="static/css/styles.css">
-</head>
-<body>
-    <header>
-        <div class="container">
-            Cabecera de balances
-        </div>
-    </header>
-    <section class="container">
-        <h1>Lista de movimientos</h1>
-        <table class="tabla_movimientos">
-            <tr class="tabla_mv_cabecera">
-                <th>Fecha</th>
-                <th>Hora</th>
-                <th>Concepto</th>
-                <th>Tipo</th>
-                <th>Cantidad</th>
-            </tr>
+{% extends 'base.html' %}
 
-            {% for movement in movements %}
-            <tr>
-                <td>{{ movement.fecha }}</td>
-                <td>{{ movement.hora }} </td>
-                <td>{{ movement.concepto}}</td>
-                <td>
-                    {% if movement.es_ingreso %} 
-                        Ingreso 
-                    {% else %} 
-                        Gasto 
-                    {% endif %}
-                </td>
-                <td>{{ movement.cantidad }}</td>
-            </tr>
-            {% endfor %}
-        </table>
-        <div class="actions">
-            <a href="/alta" role="button">Nuevo Ingreso</a>
-        </div>
-    </section>
-    <footer>
-        <div class="container">
-            &copy; 2022 - Todos los derechos reservados
-        </div>
-    </footer>
-</body>
-</html>
+{% block title %} Movimientos {% endblock %}
+
+{% block page_content %}
+    <h1>Lista de movimientos</h1>
+    <table class="tabla_movimientos">
+        <tr class="tabla_mv_cabecera">
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Concepto</th>
+            <th>Tipo</th>
+            <th>Cantidad</th>
+        </tr>
+
+        {% for movement in movements %}
+        <tr class="movement_list">
+            <td class="movement">{{ movement.fecha }}</td>
+            <td class="movement">{{ movement.hora }} </td>
+            <td class="movement">{{ movement.concepto}}</td>
+            <td class="movement">
+                {% if movement.es_ingreso %} 
+                    Ingreso 
+                {% else %} 
+                    Gasto 
+                {% endif %}
+            </td>
+            <td class="movement">{{ movement.cantidad }}</td>
+            <td class="delete-container">
+                <input type="button" value="X" name="delete" id="delete">
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <div class="actions">
+        <a href="/alta" role="button">Nuevo Ingreso</a>
+    </div>
+{% endblock %}

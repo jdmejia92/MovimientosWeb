@@ -1,14 +1,14 @@
 import csv
 
-nombref = input("fichero: ")
+name_f = input("file: ")
 
-f = open(nombref, 'r')
+f = open(name_f, 'r')
 
-freader = csv.reader(f, delimiter=",", quotechar='"')
+f_reader = csv.reader(f, delimiter=",", quotechar='"')
 
-lista_movimientos = []
+list_movements = []
 
-for fila in freader:
-    lista_movimientos.append(fila)
+for fila in f_reader:
+    list_movements.append(fila)
 
-print(lista_movimientos)
+print(list_movements)
