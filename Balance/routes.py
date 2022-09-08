@@ -1,3 +1,4 @@
+import pandas as pd
 from flask import render_template, request, redirect, url_for, flash
 from Balance import app
 from datetime import date
@@ -5,32 +6,47 @@ from datetime import date
 import csv
 
 MOVEMENTS_FILE = "data/movements.csv"
+HEADERS = ["fecha", "hora", "concepto", "es_ingreso", "cantidad", "id"]
 
 @app.route("/")
-def start():
-    list_movements = []
-    file_mv = open(MOVEMENTS_FILE, "r")
-    #----------------------------------------------------
-    cab = file_mv.readline()
-    line = file_mv.readline()
-    while line != "":
-        campos = line.split(",")
-        list_movements.append(
-            {
-                "fecha": campos[0],
-                "hora": campos[1],
-                "concepto": campos[2],
-                "es_ingreso": True if campos[3] == 'on' else False,
-                "cantidad": float(campos[4])
-            }
-        )
-
-        line = file_mv.readline()
-
-    line = file_mv.readline()
+def start():  
+    """Mostrar los movimientos, verificando que todo este correcto
+    en el CSV"""
+    try:
+        list_movements = []
+        file_mv = open(MOVEMENTS_FILE, "r")
+        reader = csv.DictReader(file_mv, delimiter=",", quotechar='"')
+        for campo in reader:
+            list_movements.append(campo)
+    except:
+        return render_template('error404.html', message='archivo')
 
     file_mv.close()
-    return render_template("list_movements.html", movements = list_movements)
+
+    # Organizar los movimientos por fecha y hora, mas antiguo de primero
+    new_list = sorted(list_movements, key=lambda d: (d['fecha'], d['hora']))
+    return render_template("list_movements.html", movements = new_list)
+
+#Borrar los movimientos
+@app.route("/delete/<int:id>")
+def delete(id):
+    try:
+        file = pd.read_csv(MOVEMENTS_FILE, delimiter=",")
+        file_id = file[file.id != id]
+        file_id.to_csv(MOVEMENTS_FILE, index=False)
+        return redirect(url_for("start"))
+    except:
+        return render_template('error404.html', message='error_inesperado')
+
+@app.route("/update/<int:id>")
+def update(id):
+    try:
+        file_mv = open(MOVEMENTS_FILE, "r")
+        reader = csv.DictReader(file_mv, delimiter=",", quotechar='"')
+        return render_template("new_movement.html")
+    except:
+        return render_template('error404.html', message='error_inesperado')
+
 
 @app.route("/alta", methods=["GET", "POST"])
 def alta():
@@ -38,7 +54,7 @@ def alta():
         return render_template("new_movement.html", data={})
     else:
         # recuperar los campos del request.form
-        file_names = ['fecha', 'hora', 'concepto', 'es_ingreso', 'cantidad']
+        file_names = ['fecha', 'hora', 'concepto', 'es_ingreso', 'cantidad', 'id']
 
         """
         validar la entrada
@@ -49,7 +65,6 @@ def alta():
             - Hora formato y valor correcto
             - Concepto es requerido
             - Concepto max 100 car
-            - es_ingreso: on / off
 
             - cantidad número mayor a cero
         """
@@ -59,6 +74,7 @@ def alta():
 
         amount = form_mv['cantidad']
         date_mv = form_mv['fecha']
+
         all_right = True
 
         try:
@@ -82,12 +98,39 @@ def alta():
         if not all_right:
             return render_template("new_movement.html", data = form_mv)
 
+        # Obtener ID
+        file_ids = []
+        with open(MOVEMENTS_FILE, 'r') as file_id:
+            reader = csv.DictReader(file_id)
+            for row in reader:
+                row_id = row['id']
+                file_ids.append(row_id)
+
+        file_id.close()
+        try:
+            new_id = int(file_ids[-1]) + 1
+        except:
+            new_id = '1'
+
+        # verificar on y off sean 1 y 0 respectivamente
+        try:
+            es_ingreso_form = dict(request.form)
+            if es_ingreso_form['es_ingreso'] == 'on':
+                new_es_ingreso = '1'
+            else:
+                new_es_ingreso = '0'
+        except:
+            new_es_ingreso = '0'
+        
         # grabar el nuevo registro en movements.csv
         file_mv = open(MOVEMENTS_FILE, 'a', newline="")
         writer = csv.DictWriter(file_mv, fieldnames=file_names)
         d = dict(request.form)
         d.pop('aceptar')
+        # grabar nuevo id y es_ingreso
+        d.update({'id': str(new_id)})
+        d.update({'es_ingreso': new_es_ingreso})
         writer.writerow(d)
         file_mv.close()
 
-        return redirect(url_for("start")) 
+        return redirect(url_for("start"))

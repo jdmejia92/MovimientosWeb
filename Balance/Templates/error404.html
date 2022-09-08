@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Error inesperado{% endblock %}
+
+{% block page_content %}
+
+<section class="error_container">
+    <img src="static/images/Error_404.png" alt="Imagen de error" class="error_img">
+    <div class="error_content">
+        <p class="error">
+            {% if message == archivo %}
+            No se puede encontrar el archivo de movimientos.
+            {% else %}
+            No se puede encontrar la página que estas buscando.</p>
+            {% endif %}
+    </div>
+</section>
+
+{% endblock %}

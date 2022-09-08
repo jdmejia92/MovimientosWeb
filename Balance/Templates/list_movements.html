@@ -4,6 +4,7 @@
 
 {% block page_content %}
     <h1>Lista de movimientos</h1>
+    <section class="section_table">
     <table class="tabla_movimientos">
         <tr class="tabla_mv_cabecera">
             <th>Fecha</th>
@@ -26,12 +27,16 @@
                 {% endif %}
             </td>
             <td class="movement">{{ movement.cantidad }}</td>
+            <td class="update_container">
+                <a role="button" href="/update/{{ movement.id }}" class="update">Edit</a>
+            </td>
             <td class="delete-container">
-                <input type="button" value="X" name="delete" id="delete">
+                <a role="button" href="/delete/{{ movement.id }}" class="delete">X</a>
             </td>
         </tr>
         {% endfor %}
     </table>
+    </section>
     <div class="actions">
         <a href="/alta" role="button">Nuevo Ingreso</a>
     </div>

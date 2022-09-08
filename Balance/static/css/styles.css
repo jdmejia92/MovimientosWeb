@@ -26,14 +26,18 @@
             margin-bottom: 30px;
         }
 
+        .section_table {
+            min-height: 200px;
+        }
+
         th {
             font-size: 1.25rem;
             font-weight: 700;
         }
 
         body > footer {
-            position: sticky;
-            bottom: 0;
+            position: static;
+            bottom: 1px;
             font-size: 1rem;
         }
 
@@ -69,24 +73,65 @@
         }
 
         .delete-container {
-            padding: 5px;
+            padding: 5px 0px;
         }
 
-        #delete {
-            max-width: 25px;
-            max-height: 35px;
-            padding: 0px;
+        .delete {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            max-height: 30px;
             margin: 0;
             opacity: 0;
         }
 
-        tr.movement_list:hover #delete {
+        tr.movement_list:hover .delete {
             opacity: 1;
             transition-delay: 20s;
-            background-color: var(--color-primario);
-            max-width: 25px;
-            max-height: 35px;
-            padding: 0px;
-            margin: 0;
             transition: all 1s ease;
+        }
+
+        .update_container {
+            padding: 5px 0px;
+        }
+
+        .update {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            max-height: 30px;
+            max-width: 45px;
+            margin: 0;
+            opacity: 0;
+        }
+
+        tr.movement_list:hover .update {
+            opacity: 1;
+            transition-delay: 20s;
+            transition: all 1s ease;
+        }
+
+        .error_container {
+            display: flex;
+            flex-direction: column;
+            margin-top: 0;
+            align-items: center;
+        }
+
+        .error_img {
+            width: 500px;
+        }
+
+        .error_content {
+            align-items: flex-start;
+        }
+
+        .error {
+            margin: 10px;
+        }
+
+        .error_button_container {
+            display: inline-block;
         }
