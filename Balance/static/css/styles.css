@@ -41,6 +41,18 @@
             font-size: 1rem;
         }
 
+        .amount {
+            text-align: right;
+        }
+
+        .type {
+            text-align: right;
+        }
+
+        .concept {
+            text-align: center;
+        }
+
         form {
             margin-bottom: 0;
         }

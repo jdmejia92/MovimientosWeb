@@ -1,12 +1,14 @@
 import pandas as pd
 from flask import render_template, request, redirect, url_for, flash
 from Balance import app
-from datetime import date
+from datetime import date, datetime
+from tempfile import NamedTemporaryFile
+import shutil
 
 import csv
 
 MOVEMENTS_FILE = "data/movements.csv"
-HEADERS = ["fecha", "hora", "concepto", "es_ingreso", "cantidad", "id"]
+FILE_NAMES = ['fecha', 'hora', 'concepto', 'es_ingreso', 'cantidad', 'id']
 
 @app.route("/")
 def start():  
@@ -17,6 +19,15 @@ def start():
         file_mv = open(MOVEMENTS_FILE, "r")
         reader = csv.DictReader(file_mv, delimiter=",", quotechar='"')
         for campo in reader:
+            # Mostrar la cantidad en el formato deseado
+            amount = "${:0,.2f}".format(float(campo['cantidad']))
+            old_time = datetime.strptime(campo['hora'],'%H:%M')
+            new_time = datetime.strftime(old_time, '%I:%M %p')
+            old_date = datetime.strptime(campo['fecha'], '%Y-%m-%d')
+            new_date = datetime.strftime(old_date, '%d-%m-%Y')
+            campo.update({'cantidad': amount})
+            campo.update({'hora': new_time})
+            campo.update({'fecha': new_date})
             list_movements.append(campo)
     except:
         return render_template('error404.html', message='archivo')
@@ -31,21 +42,35 @@ def start():
 @app.route("/delete/<int:id>")
 def delete(id):
     try:
-        file = pd.read_csv(MOVEMENTS_FILE, delimiter=",")
+        file = pd.read_csv(MOVEMENTS_FILE, delimiter=",", quotechar='"')
         file_id = file[file.id != id]
         file_id.to_csv(MOVEMENTS_FILE, index=False)
         return redirect(url_for("start"))
     except:
-        return render_template('error404.html', message='error_inesperado')
+        return render_template('error404.html', message='error-inesperado')
 
-@app.route("/update/<int:id>")
+@app.route("/update/<int:id>", methods=["GET", "POST"])
 def update(id):
-    try:
-        file_mv = open(MOVEMENTS_FILE, "r")
-        reader = csv.DictReader(file_mv, delimiter=",", quotechar='"')
-        return render_template("new_movement.html")
-    except:
-        return render_template('error404.html', message='error_inesperado')
+    if request.method == 'GET':
+        # Recuperar los datos a actualizar
+        file_mv = pd.read_csv(MOVEMENTS_FILE, delimiter=",", quotechar='"')
+        file_id = file_mv[file_mv.id == id]
+        new_file = file_id.to_dict('records')
+        data_to_update = new_file[0]
+        return render_template("new_movement.html", data=data_to_update)
+    
+    else:
+        try:
+            # Actualizar el archivo con la fila con el mismo id
+            tempfile = NamedTemporaryFile(mode='w', delete = False)
+
+            with open(MOVEMENTS_FILE, "r") as file_mv:
+                reader = csv.DictReader(file_mv, delimiter=",", quotechar='"', fieldnames=FILE_NAMES)
+                writer = csv.DictWriter(tempfile, fieldnames=FILE_NAMES)
+
+                return redirect(url_for("start"))
+        except:
+            return render_template('error404.html', message='error_inesperado')
 
 
 @app.route("/alta", methods=["GET", "POST"])
@@ -54,29 +79,17 @@ def alta():
         return render_template("new_movement.html", data={})
     else:
         # recuperar los campos del request.form
-        file_names = ['fecha', 'hora', 'concepto', 'es_ingreso', 'cantidad', 'id']
-
-        """
-        validar la entrada
-            - No fechas/horas futuras
-            - Fecha requerida
-            - Fecha formato y valor correcto
-            - Hora requerida
-            - Hora formato y valor correcto
-            - Concepto es requerido
-            - Concepto max 100 car
-
-            - cantidad número mayor a cero
-        """
-
         form_mv = dict(request.form)
         form_mv.pop('aceptar')
 
         amount = form_mv['cantidad']
         date_mv = form_mv['fecha']
+        time_mv = form_mv['hora']
+        concept_mv = form_mv['concepto']
 
         all_right = True
 
+        # Validar que la cantidad sea positiva y cuente con datos numericos
         try:
             amount = float(amount)
             if amount <= 0:
@@ -86,13 +99,33 @@ def alta():
             flash("la cantidad debe ser numérica.")
             all_right = False
 
+        # Validar que la hora no sea posterior a la actual
+        try:
+            in_time = datetime.strptime(time_mv,'%H:%M')
+            time_mv = in_time.time()
+            if date_mv == date.today() and time_mv > datetime.now().time():
+                flash("La hora no puede ser posterior a la actual")
+                all_right = False
+        except:
+            flash("Se debe ingresar un horario")
+            all_right = False
+
+        # Validar que la fecha no sea posterior a la actual
         try:
             date_mv = date.fromisoformat(date_mv)
             if date_mv > date.today():
                 flash("La fecha no puede ser posterior a hoy.")
                 all_right = False
         except ValueError as e:
-            flash(f"Fecha incorrecta: {e}")
+            flash(f"Formato de la fecha incorrecta: {e}")
+            all_right = False
+
+        # Validar que concepto tenga un valor y no sea mas de 100 caracteres
+        if concept_mv == "":
+            flash("El concepto no debe estar vacio")
+            all_right = False
+        elif len(concept_mv) >= 100:
+            flash("El concepto no puede tener mas de 100 caracteres")
             all_right = False
 
         if not all_right:
@@ -112,22 +145,21 @@ def alta():
         except:
             new_id = '1'
 
-        # verificar on y off sean 1 y 0 respectivamente
-        try:
-            es_ingreso_form = dict(request.form)
-            if es_ingreso_form['es_ingreso'] == 'on':
-                new_es_ingreso = '1'
-            else:
-                new_es_ingreso = '0'
-        except:
+        # Transformar valor es_ingreso a 1 prendido, o 0 apagado
+
+        status = form_mv.get('es_ingreso')
+        if status == 'on':
+            new_es_ingreso = '1'
+        else:
             new_es_ingreso = '0'
-        
+
         # grabar el nuevo registro en movements.csv
         file_mv = open(MOVEMENTS_FILE, 'a', newline="")
-        writer = csv.DictWriter(file_mv, fieldnames=file_names)
+        writer = csv.DictWriter(file_mv, fieldnames=FILE_NAMES)
         d = dict(request.form)
         d.pop('aceptar')
-        # grabar nuevo id y es_ingreso
+
+        # grabar nuevos valores con los formatos deseados
         d.update({'id': str(new_id)})
         d.update({'es_ingreso': new_es_ingreso})
         writer.writerow(d)

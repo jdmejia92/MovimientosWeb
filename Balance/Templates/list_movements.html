@@ -9,9 +9,9 @@
         <tr class="tabla_mv_cabecera">
             <th>Fecha</th>
             <th>Hora</th>
-            <th>Concepto</th>
-            <th>Tipo</th>
-            <th>Cantidad</th>
+            <th class="concept">Concepto</th>
+            <th class="type">Tipo</th>
+            <th class="amount">Cantidad</th>
         </tr>
 
         {% for movement in movements %}
@@ -19,14 +19,14 @@
             <td class="movement">{{ movement.fecha }}</td>
             <td class="movement">{{ movement.hora }} </td>
             <td class="movement">{{ movement.concepto}}</td>
-            <td class="movement">
-                {% if movement.es_ingreso %} 
-                    Ingreso 
+            <td class="movement type">
+                {% if movement.es_ingreso == '1' %} 
+                    Ingreso
                 {% else %} 
                     Gasto 
                 {% endif %}
             </td>
-            <td class="movement">{{ movement.cantidad }}</td>
+            <td class="movement amount">{{ movement.cantidad }}</td>
             <td class="update_container">
                 <a role="button" href="/update/{{ movement.id }}" class="update">Edit</a>
             </td>
