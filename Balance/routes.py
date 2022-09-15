@@ -2,13 +2,12 @@ import pandas as pd
 from flask import render_template, request, redirect, url_for, flash
 from Balance import app
 from datetime import date, datetime
-from tempfile import NamedTemporaryFile
-import shutil
+
 
 import csv
 
 MOVEMENTS_FILE = "data/movements.csv"
-FILE_NAMES = ['fecha', 'hora', 'concepto', 'es_ingreso', 'cantidad', 'id']
+HEADERS = ['fecha', 'hora', 'concepto', 'es_ingreso', 'cantidad', 'id']
 
 @app.route("/")
 def start():  
@@ -58,20 +57,24 @@ def update(id):
         new_file = file_id.to_dict('records')
         data_to_update = new_file[0]
         return render_template("new_movement.html", data=data_to_update)
-    
     else:
-        try:
-            # Actualizar el archivo con la fila con el mismo id
-            tempfile = NamedTemporaryFile(mode='w', delete = False)
-
-            with open(MOVEMENTS_FILE, "r") as file_mv:
-                reader = csv.DictReader(file_mv, delimiter=",", quotechar='"', fieldnames=FILE_NAMES)
-                writer = csv.DictWriter(tempfile, fieldnames=FILE_NAMES)
-
-                return redirect(url_for("start"))
-        except:
-            return render_template('error404.html', message='error_inesperado')
-
+        # Actualizar el archivo con la fila con el mismo id
+        file_mv = pd.read_csv(MOVEMENTS_FILE, delimiter=",", quotechar='"')
+        row_id = file_mv['id'] == id
+        update_row = dict(request.form)
+        update_row.pop('aceptar')
+        update_row.update({'id': id})
+        status = request.form.get('es_ingreso')
+        if status == 'on':
+            new_es_ingreso = '1'
+        else:
+            new_es_ingreso = '0'
+        print(update_row)
+        update_row.update({'es_ingreso': new_es_ingreso})
+        file_mv.loc[row_id, HEADERS] = list(update_row.values())
+        print(update_row)
+        file_mv.to_csv(MOVEMENTS_FILE, index=False)
+        return redirect(url_for("start"))
 
 @app.route("/alta", methods=["GET", "POST"])
 def alta():
@@ -146,7 +149,6 @@ def alta():
             new_id = '1'
 
         # Transformar valor es_ingreso a 1 prendido, o 0 apagado
-
         status = form_mv.get('es_ingreso')
         if status == 'on':
             new_es_ingreso = '1'
@@ -155,7 +157,7 @@ def alta():
 
         # grabar el nuevo registro en movements.csv
         file_mv = open(MOVEMENTS_FILE, 'a', newline="")
-        writer = csv.DictWriter(file_mv, fieldnames=FILE_NAMES)
+        writer = csv.DictWriter(file_mv, fieldnames=HEADERS)
         d = dict(request.form)
         d.pop('aceptar')
 

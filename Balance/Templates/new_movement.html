@@ -4,7 +4,11 @@
 
 {% block page_content %}
     <h1>Nuevo movimiento</h1>
+    {% if data.id == "" %}
     <form action="/alta" method="post">
+    {% else %}
+    <form action="/update/{{data.id}}" method="post">
+    {% endif %}
         <div class="grid">
             <label for="fecha">Fecha:
                 <input type="date" name="fecha" id="fecha" value="{{data.fecha}}">
@@ -19,7 +23,7 @@
             {% if data.es_ingreso == '1' %}
             <input type="checkbox" name="es_ingreso" id="es_ingreso" value="1" checked>
             {% else %}
-            <input type="checkbox" name="es_ingreso" id="es_ingreso" value="0">
+            <input type="checkbox" name="es_ingreso" id="es_ingreso">
             {% endif %}
         </label>
         <label for="cantidad">Cantidad:</label>
