@@ -62,17 +62,18 @@ def update(id):
         file_mv = pd.read_csv(MOVEMENTS_FILE, delimiter=",", quotechar='"')
         row_id = file_mv['id'] == id
         update_row = dict(request.form)
+        amount = update_row['cantidad']
         update_row.pop('aceptar')
-        update_row.update({'id': id})
+        update_row.pop('cantidad')
         status = request.form.get('es_ingreso')
         if status == 'on':
             new_es_ingreso = '1'
         else:
             new_es_ingreso = '0'
-        print(update_row)
         update_row.update({'es_ingreso': new_es_ingreso})
+        update_row.update({'cantidad': amount})
+        update_row.update({'id': id})
         file_mv.loc[row_id, HEADERS] = list(update_row.values())
-        print(update_row)
         file_mv.to_csv(MOVEMENTS_FILE, index=False)
         return redirect(url_for("start"))
 
