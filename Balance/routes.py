@@ -80,7 +80,7 @@ def update(id):
 @app.route("/alta", methods=["GET", "POST"])
 def alta():
     if request.method == 'GET':
-        return render_template("new_movement.html", data={})
+        return render_template("new_movement.html", data={}, new=1)
     else:
         # recuperar los campos del request.form
         form_mv = dict(request.form)
@@ -107,7 +107,8 @@ def alta():
         try:
             in_time = datetime.strptime(time_mv,'%H:%M')
             time_mv = in_time.time()
-            if date_mv == date.today() and time_mv > datetime.now().time():
+            today = date.fromisoformat(date_mv)
+            if today <= date.today() and time_mv > datetime.now().time() or today > date.today() and time_mv > datetime.now().time():
                 flash("La hora no puede ser posterior a la actual")
                 all_right = False
         except:
@@ -133,7 +134,7 @@ def alta():
             all_right = False
 
         if not all_right:
-            return render_template("new_movement.html", data = form_mv)
+            return render_template("new_movement.html", data = form_mv, new=1)
 
         # Obtener ID
         file_ids = []
@@ -165,6 +166,7 @@ def alta():
         # grabar nuevos valores con los formatos deseados
         d.update({'id': str(new_id)})
         d.update({'es_ingreso': new_es_ingreso})
+        print(d)
         writer.writerow(d)
         file_mv.close()
 

@@ -4,7 +4,7 @@
 
 {% block page_content %}
     <h1>Nuevo movimiento</h1>
-    {% if data.id == "" %}
+    {% if new == 1 %}
     <form action="/alta" method="post">
     {% else %}
     <form action="/update/{{data.id}}" method="post">
