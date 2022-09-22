@@ -20,8 +20,8 @@
         <label for="concepto">Concepto:</label>
         <input type="text" name="concepto" id="concepto" value="{{data.concepto}}">
         <label for="es_ingreso">Es ingreso:
-            {% if data.es_ingreso == '1' %}
-            <input type="checkbox" name="es_ingreso" id="es_ingreso" value="1" checked>
+            {% if data.es_ingreso == 1 %}
+            <input type="checkbox" name="es_ingreso" id="es_ingreso" value='1' checked>
             {% else %}
             <input type="checkbox" name="es_ingreso" id="es_ingreso">
             {% endif %}

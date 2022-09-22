@@ -66,7 +66,7 @@ def update(id):
         update_row.pop('aceptar')
         update_row.pop('cantidad')
         status = request.form.get('es_ingreso')
-        if status == 'on':
+        if status == 'on' or status == '1':
             new_es_ingreso = '1'
         else:
             new_es_ingreso = '0'
