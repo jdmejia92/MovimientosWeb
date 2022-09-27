@@ -11,8 +11,7 @@ HEADERS = ['fecha', 'hora', 'concepto', 'es_ingreso', 'cantidad', 'id']
 
 @app.route("/")
 def start():  
-    """Mostrar los movimientos, verificando que todo este correcto
-    en el CSV"""
+    """Mostrar los movimientos, formateando al gusto"""
     try:
         list_movements = []
         file_mv = open(MOVEMENTS_FILE, "r")
@@ -63,6 +62,51 @@ def update(id):
         row_id = file_mv['id'] == id
         update_row = dict(request.form)
         amount = update_row['cantidad']
+        time_mv = update_row['hora']
+        date_mv = update_row['fecha']
+        concept_mv = update_row['concepto']
+        all_right = True
+        
+        #Validaciones
+        try:
+            amount = float(amount)
+            if amount <= 0:
+                flash("La cantidad debe ser positiva.")
+                all_right = False
+        except ValueError:
+            flash("la cantidad debe ser numérica.")
+            all_right = False
+
+        try:
+            in_time = datetime.strptime(time_mv,'%H:%M')
+            time_mv = in_time.time()
+            today = date.fromisoformat(date_mv)
+            if today <= date.today() and time_mv > datetime.now().time() or today > date.today() and time_mv > datetime.now().time():
+                flash("La hora no puede ser posterior a la actual")
+                all_right = False
+        except:
+            flash("Se debe ingresar un horario")
+            all_right = False
+
+        try:
+            date_mv = date.fromisoformat(date_mv)
+            if date_mv > date.today():
+                flash("La fecha no puede ser posterior a hoy.")
+                all_right = False
+        except ValueError as e:
+            flash(f"Formato de la fecha incorrecta: {e}")
+            all_right = False
+
+        if concept_mv == "":
+            flash("El concepto no debe estar vacio")
+            all_right = False
+        elif len(concept_mv) >= 100:
+            flash("El concepto no puede tener mas de 100 caracteres")
+            all_right = False
+
+        if not all_right:
+            return render_template("new_movement.html", data=update_row, id=id, error=1)
+
         update_row.pop('aceptar')
         update_row.pop('cantidad')
         status = request.form.get('es_ingreso')
@@ -93,7 +137,9 @@ def alta():
 
         all_right = True
 
-        # Validar que la cantidad sea positiva y cuente con datos numericos
+        # Validaciones
+
+        # Cantidad
         try:
             amount = float(amount)
             if amount <= 0:
@@ -103,7 +149,7 @@ def alta():
             flash("la cantidad debe ser numérica.")
             all_right = False
 
-        # Validar que la hora no sea posterior a la actual
+        # Hora
         try:
             in_time = datetime.strptime(time_mv,'%H:%M')
             time_mv = in_time.time()
@@ -115,7 +161,7 @@ def alta():
             flash("Se debe ingresar un horario")
             all_right = False
 
-        # Validar que la fecha no sea posterior a la actual
+        # Fecha
         try:
             date_mv = date.fromisoformat(date_mv)
             if date_mv > date.today():
@@ -125,7 +171,7 @@ def alta():
             flash(f"Formato de la fecha incorrecta: {e}")
             all_right = False
 
-        # Validar que concepto tenga un valor y no sea mas de 100 caracteres
+        # Concepto
         if concept_mv == "":
             flash("El concepto no debe estar vacio")
             all_right = False
@@ -150,7 +196,6 @@ def alta():
         except:
             new_id = '1'
 
-        # Transformar valor es_ingreso a 1 prendido, o 0 apagado
         status = form_mv.get('es_ingreso')
         if status == 'on':
             new_es_ingreso = '1'
