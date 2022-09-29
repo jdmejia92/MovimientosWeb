@@ -5,37 +5,38 @@
 {% block page_content %}
     <h1>Lista de movimientos</h1>
     <section class="section_table">
-    <table class="tabla_movimientos">
-        <tr class="tabla_mv_cabecera">
-            <th>Fecha</th>
-            <th>Hora</th>
-            <th class="concept">Concepto</th>
-            <th class="type">Tipo</th>
-            <th class="amount">Cantidad</th>
-        </tr>
-
-        {% for movement in movements %}
-        <tr class="movement_list">
-            <td class="movement">{{ movement.fecha }}</td>
-            <td class="movement">{{ movement.hora }} </td>
-            <td class="movement">{{ movement.concepto}}</td>
-            <td class="movement type">
-                {% if movement.es_ingreso == '1' %} 
-                    Ingreso
-                {% else %} 
-                    Gasto 
-                {% endif %}
-            </td>
-            <td class="movement amount">{{ movement.cantidad }}</td>
-            <td class="update_container">
-                <a role="button" href="/update/{{ movement.id }}" class="update">Edit</a>
-            </td>
-            <td class="delete-container">
-                <a role="button" href="/delete/{{ movement.id }}" class="delete">X</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+        <table class="movements_table">
+            <thead class="tabla_mv_cabecera">
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th class="concept">Concepto</th>
+                <th class="type">Tipo</th>
+                <th class="amount">Cantidad</th>
+            </thead>
+            <tbody class="movement_list_container">
+                {% for movement in movements %}
+                <tr class="movement_list">
+                    <td>{{ movement.fecha }}</td>
+                    <td>{{ movement.hora }} </td>
+                    <td>{{ movement.concepto}}</td>
+                    <td>
+                        {% if movement.es_ingreso == '1' %} 
+                            Ingreso
+                        {% else %} 
+                            Gasto 
+                        {% endif %}
+                    </td>
+                    <td class="amount">{{ movement.cantidad }}</td>
+                    <td class="update_container">
+                        <a role="button" href="/update/{{ movement.id }}" class="update">Edit</a>
+                    </td>
+                    <td class="delete-container">
+                        <a role="button" href="/delete/{{ movement.id }}" class="delete">X</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </section>
     <div class="actions">
         <a href="/alta" role="button">Nuevo Ingreso</a>
